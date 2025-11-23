@@ -39,21 +39,20 @@ The database is structured in modular layers, processing a query from text to di
 
 ### Phase 1: The Frontend
 - [x] **Step 1: REPL**: A simple command-line loop that accepts input.
-- [ ] **Step 2: Tokenizer**: Breaking input into keywords and identifiers.
-- [ ] **Step 3: Parser**: Validating syntax and creating a statement.
+- [x] **Step 2: Command Processor**: Distinguishing Meta-Commands from SQL Statements and basic compilation.
 
 ### Phase 2: The Backend (In-Memory)
-- [ ] **Step 4: Row Structure**: Defining how data is stored in C++ structs.
-- [ ] **Step 5: Table Structure**: Storing rows in a flat array (in-memory).
+- [ ] **Step 3: In-Memory Append-Only Table**: Hardcoded table schema and paging.
+- [ ] **Step 4: Testing**: Basic unit tests for the database.
 
 ### Phase 3: Persistence
-- [ ] **Step 6: Pager**: Reading/Writing 4KB pages to disk.
-- [ ] **Step 7: Cursor**: Abstraction for iterating over the table.
+- [ ] **Step 5: Pager**: Reading/Writing 4KB pages to disk.
+- [ ] **Step 6: Cursor**: Abstraction for iterating over the table.
 
 ### Phase 4: B-Tree Implementation
-- [ ] **Step 8: Leaf Node Format**: Storing rows in B-Tree leaves.
-- [ ] **Step 9: Internal Node Format**: Routing logic for the B-Tree.
-- [ ] **Step 10: Splitting**: Handling full nodes.
+- [ ] **Step 7: Leaf Node Format**: Storing rows in B-Tree leaves.
+- [ ] **Step 8: Internal Node Format**: Routing logic for the B-Tree.
+- [ ] **Step 9: Splitting**: Handling full nodes.
 
 ## 🚀 Build & Run
 
