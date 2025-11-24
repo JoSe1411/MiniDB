@@ -19,7 +19,8 @@ enum MetaCommandResults{
 enum PrepareResult{
     PREPARE_SUCCESS,
     PREPARE_UNRECOGNIZED_COMMAND,
-    PREPARE_INSERT_WRONG_ARGUMENT
+    PREPARE_INSERT_SYNTAX_ERROR,
+    PREPARE_INSERT_ARGUMENT_LENGTH_ERROR
 };
 
 enum StatementType{
@@ -43,7 +44,6 @@ void print_prompt(){
     return;
 }
 
-
 void read_input(InputBuffer* reader){
     getline(cin,reader->buffer);
     int content_size = reader->buffer.size();
@@ -57,7 +57,7 @@ void close_input_buffer(InputBuffer* reader){
 }
 
 
-void execute_command(Statement* statement); 
+void execute_command(Statement* statement); // Forward declaration
 
 PrepareResult prepare_statement(InputBuffer* reader,Statement* statement){    
     stringstream ss(reader->buffer);
@@ -66,12 +66,16 @@ PrepareResult prepare_statement(InputBuffer* reader,Statement* statement){
 
     if(command_type == "insert"){
         statement->statement = STATEMENT_INSERT;
+        // now we extract the relevant information for our insert command
+        // format - insert 1    joy_sen       example@gmail.com
+        //                (id)  (username)        (email)
+
         int argument_count = 0;
         vector<string> arguments;
         while(ss>>command_type){
              if(argument_count == 3){
                 cout<<"Argument count - "<<argument_count<<endl;
-                return PREPARE_INSERT_WRONG_ARGUMENT;
+                return PREPARE_INSERT_SYNTAX_ERROR;
              }
             
             arguments.emplace_back(command_type);
@@ -79,7 +83,28 @@ PrepareResult prepare_statement(InputBuffer* reader,Statement* statement){
         }
         if(argument_count<3){
             cout<<"Argument count - "<<argument_count<<endl;
-            return PREPARE_INSERT_WRONG_ARGUMENT;
+            return PREPARE_INSERT_SYNTAX_ERROR;
+        }
+        int user_id = stoi(arguments[0]);
+        char username[32];
+        char email[32];
+        int username_length = arguments[1].size();
+        int email_length = arguments[2].size();
+        if(username_length>=32){
+            cout<<"Username length - "<<username_length<<endl;
+            return PREPARE_INSERT_ARGUMENT_LENGTH_ERROR;
+        }
+        if(email_length>=32){
+            cout<<"Email length - "<<email_length<<endl;
+            return PREPARE_INSERT_ARGUMENT_LENGTH_ERROR;
+        }
+
+        for(int i =0 ; i<username_length;i++){
+            username[i] = arguments[1][i];
+        }
+
+        for(int i =0 ; i<email_length ; i++){
+            email[i] = arguments[2][i];
         }
 
         return PREPARE_SUCCESS;
@@ -142,8 +167,11 @@ int main (){
             case PREPARE_UNRECOGNIZED_COMMAND:
                 cout << "Unrecognized keyword at start of '" << input_buffer->buffer << "'." << endl;
                 break;
-            case PREPARE_INSERT_WRONG_ARGUMENT:
+            case PREPARE_INSERT_SYNTAX_ERROR:
                 cout<<"Expected 3 arguments."<<endl;
+                break;
+            case PREPARE_INSERT_ARGUMENT_LENGTH_ERROR:
+                cout<<"Expected length is 32."<<endl;
                 continue;
         }
 
