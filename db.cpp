@@ -57,7 +57,7 @@ void close_input_buffer(InputBuffer* reader){
 }
 
 
-void execute_command(Statement* statement); // Forward declaration
+void execute_command(Statement* statement); 
 
 PrepareResult prepare_statement(InputBuffer* reader,Statement* statement){    
     stringstream ss(reader->buffer);
@@ -66,10 +66,6 @@ PrepareResult prepare_statement(InputBuffer* reader,Statement* statement){
 
     if(command_type == "insert"){
         statement->statement = STATEMENT_INSERT;
-        // now we extract the relevant information for our insert command
-        // format - insert 1    joy_sen       example@gmail.com
-        //                (id)  (username)        (email)
-
         int argument_count = 0;
         vector<string> arguments;
         while(ss>>command_type){
