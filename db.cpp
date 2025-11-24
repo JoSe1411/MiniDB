@@ -3,6 +3,7 @@
 #include<sstream>
 #include<vector>
 #include<algorithm>
+#include "schema.h"
 using namespace std;
 
 struct InputBuffer{
@@ -17,7 +18,8 @@ enum MetaCommandResults{
 
 enum PrepareResult{
     PREPARE_SUCCESS,
-    PREPARE_UNRECOGNIZED_COMMAND
+    PREPARE_UNRECOGNIZED_COMMAND,
+    PREPARE_INSERT_WRONG_ARGUMENT
 };
 
 enum StatementType{
@@ -64,6 +66,26 @@ PrepareResult prepare_statement(InputBuffer* reader,Statement* statement){
 
     if(command_type == "insert"){
         statement->statement = STATEMENT_INSERT;
+        // now we extract the relevant information for our insert command
+        // format - insert 1    joy_sen       example@gmail.com
+        //                (id)  (username)        (email)
+
+        int argument_count = 0;
+        vector<string> arguments;
+        while(ss>>command_type){
+             if(argument_count == 3){
+                cout<<"Argument count - "<<argument_count<<endl;
+                return PREPARE_INSERT_WRONG_ARGUMENT;
+             }
+            
+            arguments.emplace_back(command_type);
+            argument_count++;
+        }
+        if(argument_count<3){
+            cout<<"Argument count - "<<argument_count<<endl;
+            return PREPARE_INSERT_WRONG_ARGUMENT;
+        }
+
         return PREPARE_SUCCESS;
     }
     if(command_type == "select"){
@@ -123,6 +145,9 @@ int main (){
                 break;
             case PREPARE_UNRECOGNIZED_COMMAND:
                 cout << "Unrecognized keyword at start of '" << input_buffer->buffer << "'." << endl;
+                break;
+            case PREPARE_INSERT_WRONG_ARGUMENT:
+                cout<<"Expected 3 arguments."<<endl;
                 continue;
         }
 
